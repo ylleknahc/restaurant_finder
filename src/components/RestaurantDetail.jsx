@@ -1,64 +1,110 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { Carousel } from 'react-bootstrap';
+import StarRatings from 'react-star-ratings';
+
+import MapContainer from './MapContainer';
+import Spinner from './Spinner';
 
 class RestaurantDetail extends Component {
     state = {
         restaurant: {}
     }
 
-    componentDidMount() {
-        axios.get(`https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/${this.props.match.params.id}`,
+    // componentDidMount() {
+    //     axios.get(`https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/${this.props.match.params.id}`,
+    //         { headers: { Authorization: `Bearer ${process.env.REACT_APP_YELP_API}`} })
+    //         .then(res => {
+    //             console.log("logging res.data", res.data);
+    //             this.setState({ restaurant: res.data })
+    //         })
+    //         .catch(err => console.log(err));
+    // }
+    async componentDidMount() {
+        const { data: restaurant } = await axios.get(`https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/${this.props.match.params.id}`,
             { headers: { Authorization: `Bearer ${process.env.REACT_APP_YELP_API}`} })
-            .then(res => {
-                console.log(res.data);
-                this.setState({ restaurant: res.data })
-            })
-            .catch(err => console.log(err));
+        this.setState({ restaurant: restaurant })
     }
 
     render() {
         const { restaurant } = this.state;
-        console.log(restaurant.photos);
-        let photos = [];
-        photos = restaurant.photos;
-        console.log("hi", photos);
-        for (let p in restaurant.photos) {
-            console.log(restaurant.photos[p]);
-        }
-        // photos.map(p => console.log(p));
-        return (
-            <React.Fragment>
-                <Link to="/" className="btn btn-danger btn-sm mb-4" style={{backgroundColor:"#D22323"}}>Go Back</Link>
-                <div className="card">
-                    <h5 className="card-header">
-                        {restaurant.name}
-                    </h5>
-                    <div className="card-body">
-                        <div id="carouselExampleControls" className="carousel slide" data-ride="carousel">
-                            <div className="carousel-inner">
-                                <div className="carousel-item active">
-                                    {/* {photos.map(p =>
-                                        <img src={} alt="" className="d-block w-100"/>
-                                    )} */}
-                                </div>
-                                <a className="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span className="sr-only">Previous</span>
-                                </a>
-                                <a className="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span className="sr-only">Next</span>
-                                </a>
-                            </div>
+        // let photos = [];
+        // photos = restaurant.photos;
+        // console.log("photos", photos);
+        // for (let p in restaurant.photos) {
+        //     console.log("for loop", restaurant.photos[p]);
+        // }
+        if (restaurant.photos == undefined || Object.keys(restaurant.photos).length == 0) {
+            return <Spinner />
+        } else {
+            // console.log(restaurant);
+            // restaurant.hours.map(h => {
+
+            //     console.log(h.is_open_now);
+            // })
+            // console.log("testing", restaurant.hours[0].is_open_now)
+            // console.log(restaurant.photos);
+            // restaurant.photos.map(p => console.log("photos map", p));
+            return (
+                <React.Fragment>
+                    <Link to="/" className="btn btn-dangew2r btn-sm mb-4" style={{color:"#FFFFFF",backgroundColor:"#D22323",textDecoration:'none'}}>Go Back</Link>
+                    <div className="card">
+                        <h5 className="card-header">
+                           {restaurant.name}&nbsp;&nbsp;
+                            <StarRatings
+                                rating={restaurant.rating}
+                                starRatedColor="#D32323"
+                                numberOfStars={5}
+                                name="rating"
+                                starDimension="1rem"
+                                starSpacing="0.1rem"
+                            />
+                        </h5>
+                        <div className="card-body">
+                            <Carousel>
+                                {restaurant.photos.map(photo =>
+                                <Carousel.Item key={photo}>
+                                     <img id="food-img" src={photo} alt="food image" className="d-block w-100"/>
+                                </Carousel.Item>
+                                )}
+                            </Carousel>
                         </div>
                     </div>
-                </div>
-                <ul className="list-group mt-3">
-                    <li className="list-group-item"></li>
-                </ul>
-            </React.Fragment>
-        );
+                    <ul className="list-group mt-3 mb-3">
+                        <li className="list-group-item">
+                            <strong>Price</strong>:
+                            <div className="ml-2">
+                                {restaurant.price}
+                                {/* <StarRatings
+                                    rating={restaurant.rating}
+                                    starRatedColor="#D32323"
+                                    numberOfStars={5}
+                                    name="rating"
+                                    starDimension="1rem"
+                                    starSpacing="0.1rem"
+                                /> */}
+                            </div>
+                            <strong>Location</strong>:
+                            <div className="ml-2">
+                                {restaurant.location.display_address[0]}
+                                <br/>
+                                {restaurant.location.display_address[1]}
+                            </div>
+                            <strong>Phone</strong>:
+                            <div className="ml-2">
+                                {restaurant.display_phone}
+                            </div>
+                            <strong>Open Now?</strong>
+                            <div className="ml-2">
+                                {restaurant.hours[0].is_open_now ? "Yes": "No"}
+                            </div>
+                        </li>
+                    </ul>
+                    <MapContainer coordinates={restaurant.coordinates}/>
+                </React.Fragment>
+            );
+        }
     }
 }
 

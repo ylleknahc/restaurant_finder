@@ -7,7 +7,7 @@ const reducer = (state, action) => {
   return {
     ...state,
     restaurant_list: action.payload,
-    heading: "Top 20 Restaurants in the Area"
+    heading: action.header
   };
 };
 
