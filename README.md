@@ -1,5 +1,17 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## In-App Screenshots (full page captures)
+<p>Main Screen</p>
+<img src="images/Main.png" width="600">
+<p>Main Screen with search results for "Seattle"</p>
+<img src="images/MainSearchResults.png" width="600">
+<p>Main Screen with search results for "Vancouver"</p>
+<img src="images/MainSearchResults2.png" width="600">
+<p>Main Screen with results for Picking a Random Restaurant</p>
+<img src="images/MainPickRandomRest.png" width="600">
+<p>Get details on a Restaurant including caurosel of images and Google Maps location</p>
+<img src="images/RestaurantDetail.png" width="600">
+
 ## Available Scripts
 
 In the project directory, you can run:
